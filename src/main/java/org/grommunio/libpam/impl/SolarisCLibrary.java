@@ -23,64 +23,13 @@
  */
 
 
-package org.jvnet.libpam2.impl;
-
-import org.jvnet.libpam2.impl.CLibrary.passwd;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package org.grommunio.libpam.impl;
 
 /**
- * Solaris passwd
- * <p>
- * struct passwd {
- * char    *pw_name;
- * char    *pw_passwd;
- * uid_t   pw_uid;
- * gid_t   pw_gid;
- * char    *pw_age;
- * char    *pw_comment;
- * char    *pw_gecos;
- * char    *pw_dir;
- * char    *pw_shell;
- * };
- *
  * @author Sebastian Sdorra
  */
-public class SolarisPasswd extends passwd {
-    public String pw_age;
+public interface SolarisCLibrary extends CLibrary {
 
-    public String pw_comment;
-
-    public String pw_gecos;
-
-    public String pw_dir;
-
-    public String pw_shell;
-
-
-    @Override
-    public String getPwGecos() {
-        return pw_gecos;
-    }
-
-    @Override
-    public String getPwDir() {
-        return pw_dir;
-    }
-
-    @Override
-    public String getPwShell() {
-        return pw_shell;
-    }
-
-    @Override
-    protected List getFieldOrder() {
-        List fieldOrder = new ArrayList(super.getFieldOrder());
-        fieldOrder.addAll(Arrays.asList("pw_age", "pw_comment", "pw_gecos",
-                "pw_dir", "pw_shell"));
-        return fieldOrder;
-    }
+    SolarisPasswd getpwnam(String username);
 
 }

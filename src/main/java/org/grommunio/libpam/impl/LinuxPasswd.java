@@ -22,9 +22,9 @@
  *  THE SOFTWARE.
  */
 
-package org.jvnet.libpam2.impl;
+package org.grommunio.libpam.impl;
 
-import org.jvnet.libpam2.impl.CLibrary.passwd;
+import org.grommunio.libpam.impl.CLibrary.passwd;
 
 import java.util.ArrayList;
 import java.util.Arrays;

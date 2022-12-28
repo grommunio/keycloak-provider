@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jvnet.libpam2.impl;
+package org.grommunio.libpam.impl;
 
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
@@ -30,7 +30,7 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
-import org.jvnet.libpam2.PAMException;
+import org.grommunio.libpam.PAMException;
 
 import java.util.Arrays;
 import java.util.List;

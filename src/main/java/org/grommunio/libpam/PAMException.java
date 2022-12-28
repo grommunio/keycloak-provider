@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jvnet.libpam2;
+package org.grommunio.libpam;
 
 /**
  * Exception in PAM invoactions.

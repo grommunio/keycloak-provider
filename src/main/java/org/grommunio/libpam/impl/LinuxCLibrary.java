@@ -22,13 +22,13 @@
  *  THE SOFTWARE.
  */
 
-package org.jvnet.libpam2.impl;
+package org.grommunio.libpam.impl;
 
 /**
  * @author Sebastian Sdorra
  */
-public interface BSDCLibrary extends CLibrary {
+public interface LinuxCLibrary extends CLibrary {
 
-    BSDPasswd getpwnam(String username);
+    LinuxPasswd getpwnam(String username);
 
 }

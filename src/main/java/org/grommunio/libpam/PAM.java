@@ -21,27 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jvnet.libpam2;
+package org.grommunio.libpam;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import org.jboss.logging.Logger;
-import org.jvnet.libpam2.impl.CLibrary.passwd;
-import org.jvnet.libpam2.impl.PAMLibrary.pam_conv;
-import org.jvnet.libpam2.impl.PAMLibrary.pam_conv.PamCallback;
-import org.jvnet.libpam2.impl.PAMLibrary.pam_handle_t;
-import org.jvnet.libpam2.impl.PAMLibrary.pam_message;
-import org.jvnet.libpam2.impl.PAMLibrary.pam_response;
+import org.grommunio.libpam.impl.CLibrary.passwd;
+import org.grommunio.libpam.impl.PAMLibrary.pam_conv;
+import org.grommunio.libpam.impl.PAMLibrary.pam_conv.PamCallback;
+import org.grommunio.libpam.impl.PAMLibrary.pam_handle_t;
+import org.grommunio.libpam.impl.PAMLibrary.pam_message;
+import org.grommunio.libpam.impl.PAMLibrary.pam_response;
 
 import java.util.Set;
 
 import static com.sun.jna.Native.POINTER_SIZE;
-import static org.jvnet.libpam2.impl.CLibrary.libc;
-import static org.jvnet.libpam2.impl.PAMLibrary.PAM_CONV_ERR;
-import static org.jvnet.libpam2.impl.PAMLibrary.PAM_PROMPT_ECHO_OFF;
-import static org.jvnet.libpam2.impl.PAMLibrary.PAM_SUCCESS;
-import static org.jvnet.libpam2.impl.PAMLibrary.PAM_USER;
-import static org.jvnet.libpam2.impl.PAMLibrary.libpam;
+import static org.grommunio.libpam.impl.CLibrary.libc;
+import static org.grommunio.libpam.impl.PAMLibrary.PAM_CONV_ERR;
+import static org.grommunio.libpam.impl.PAMLibrary.PAM_PROMPT_ECHO_OFF;
+import static org.grommunio.libpam.impl.PAMLibrary.PAM_SUCCESS;
+import static org.grommunio.libpam.impl.PAMLibrary.PAM_USER;
+import static org.grommunio.libpam.impl.PAMLibrary.libpam;
 
 /**
  * PAM authenticator.
@@ -119,37 +119,10 @@ public class PAM {
     /**
      * Authenticate the user with a password.
      *
-     * @return Upon a successful authentication, return information about the user.
-     * @throws PAMException If the authentication fails.
-     */
-    public UnixUser authenticate(String username, String... factors) throws PAMException {
-        this.factors = factors;
-        try {
-            check(libpam.pam_set_item(pht, PAM_USER, username), "pam_set_item failed");
-            check(libpam.pam_authenticate(pht, 0), "pam_authenticate failed");
-            check(libpam.pam_setcred(pht, 0), "pam_setcred failed");
-            // several different error code seem to be used to represent authentication failures
-            check(libpam.pam_acct_mgmt(pht,0),"pam_acct_mgmt failed");
-
-            PointerByReference r = new PointerByReference();
-            check(libpam.pam_get_item(pht, PAM_USER, r), "pam_get_item failed");
-            String userName = r.getValue().getString(0);
-            passwd pwd = libc.getpwnam(userName);
-            if (pwd == null)
-                throw new PAMException("Authentication succeeded but no user information is available");
-            return new UnixUser(userName, pwd);
-        } finally {
-            this.factors = null;
-        }
-    }
-
-    /**
-     * Authenticate the user with a password.
-     *
      * @return Upon a successful authentication, return true.
      * @throws PAMException If the authentication fails.
      */
-    public boolean authenticateOnly(String username, String... factors) throws PAMException {
+    public boolean authenticate(String username, String... factors) throws PAMException {
         this.factors = factors;
 	boolean ret = false;
         try {
@@ -168,18 +141,6 @@ public class PAM {
             this.factors = null;
 	    return ret;
         }
-    }
-
-    /**
-     * Returns the groups a user belongs to
-     *
-     * @param username
-     * @return Set of group names
-     * @throws PAMException
-     * @deprecated Pointless and ugly convenience method.
-     */
-    public Set<String> getGroupsOfUser(String username) throws PAMException {
-        return new UnixUser(username).getGroups();
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  *  The MIT License
  *
- *  Copyright 2011, Sun Microsystems, Inc.
+ *  Copyright 2014, R. Tyler Croy, Sun Microsystems, Inc.
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,35 @@
  *  THE SOFTWARE.
  */
 
-package org.jvnet.libpam2.impl;
+package org.grommunio.libpam.impl;
 
-import org.jvnet.libpam2.impl.CLibrary.passwd;
+import org.grommunio.libpam.impl.CLibrary.passwd;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * FreeeBSD, OpenBSD and MacOS passwd
+ * FreeeBSD
  * <p>
  * struct passwd {
- * char    *pw_name;
- * char    *pw_passwd;
- * uid_t   pw_uid;
- * gid_t   pw_gid;
- * time_t pw_change;
- * char    *pw_class;
- * char    *pw_gecos;
- * char    *pw_dir;
- * char    *pw_shell;
- * time_t pw_expire;
+ * char	*pw_name;
+ * char	*pw_passwd;
+ * uid_t	pw_uid;
+ * gid_t	pw_gid;
+ * time_t	pw_change;
+ * char	*pw_class;
+ * char	*pw_gecos;
+ * char	*pw_dir;
+ * char	*pw_shell;
+ * time_t	pw_expire;
+ * int	pw_fields;
  * };
  *
- * @author Sebastian Sdorra
+ * @author R. Tyler Croy
  */
-public class BSDPasswd extends passwd {
+
+public class FreeBSDPasswd extends passwd {
     /* password change time */
     public long pw_change;
 
@@ -66,6 +68,9 @@ public class BSDPasswd extends passwd {
 
     /* account expiration */
     public long pw_expire;
+
+    /* internal on FreeBSD? */
+    public int pw_fields;
 
     @Override
     public String getPwGecos() {
@@ -86,7 +91,7 @@ public class BSDPasswd extends passwd {
     protected List getFieldOrder() {
         List fieldOrder = new ArrayList(super.getFieldOrder());
         fieldOrder.addAll(Arrays.asList("pw_change", "pw_class", "pw_gecos",
-                "pw_dir", "pw_shell", "pw_expire"));
+                "pw_dir", "pw_shell", "pw_expire", "pw_fields"));
         return fieldOrder;
     }
 

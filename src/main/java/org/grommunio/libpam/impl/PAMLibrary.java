@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jvnet.libpam2.impl;
+package org.grommunio.libpam.impl;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
@@ -34,7 +34,7 @@ import com.sun.jna.ptr.PointerByReference;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jvnet.libpam2.impl.CLibrary.libc;
+import static org.grommunio.libpam.impl.CLibrary.libc;
 
 /**
  * libpam.so binding.
