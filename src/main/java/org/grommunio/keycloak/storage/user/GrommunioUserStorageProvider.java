@@ -201,7 +201,7 @@ public class GrommunioUserStorageProvider implements
     @Override
     public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String,String> params, Integer firstResult, Integer maxResults) {
         String search = params.get(UserModel.SEARCH);
-        logger.infof("getUsers: realm=%s, search=%s", realm.getName(), search);
+        logger.infof("searchForUserStream: realm=%s, search=%s, firstResult=%d, maxResults=%d", realm.getName(), search, firstResult, maxResults);
 
         try ( Connection c = DbUtil.getConnection(this.model)) {
             PreparedStatement st = c.prepareStatement(
@@ -211,7 +211,7 @@ public class GrommunioUserStorageProvider implements
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
                 "join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
                 "where u.username like ? order by u.username limit ? offset ?");
-            st.setString(1, search);
+            st.setString(1, "%" + search + "%");
             st.setInt(2, maxResults);
             st.setInt(3, firstResult);
             st.execute();
