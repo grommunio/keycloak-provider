@@ -132,10 +132,6 @@ public class PAM {
             // several different error code seem to be used to represent authentication failures
             check(libpam.pam_acct_mgmt(pht,0),"pam_acct_mgmt failed");
 
-            PointerByReference r = new PointerByReference();
-            check(libpam.pam_get_item(pht, PAM_USER, r), "pam_get_item failed");
-            String userName = r.getValue().getString(0);
-            passwd pwd = libc.getpwnam(userName);
             ret = true;
         } finally {
             this.factors = null;

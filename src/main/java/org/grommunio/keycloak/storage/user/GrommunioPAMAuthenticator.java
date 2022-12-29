@@ -48,16 +48,9 @@ public class GrommunioPAMAuthenticator {
         logger.info("authenticate()");
         PAM pam = null;
         boolean authenticated = false;
-        try {
-            pam = new PAM(PAM_SERVICE);
-        } catch (PAMException e) {
-            logger.error("PAM init failed", e);
-            e.printStackTrace();
-        } finally {
-            pam.dispose();
-        }
 
         try {
+            pam = new PAM(PAM_SERVICE);
             authenticated = pam.authenticate(username, factors);
         } catch (PAMException e) {
             logger.error("PAM Authentication failed", e);
@@ -65,6 +58,7 @@ public class GrommunioPAMAuthenticator {
         } finally {
             pam.dispose();
         }
+
         return authenticated;
     }
 }
