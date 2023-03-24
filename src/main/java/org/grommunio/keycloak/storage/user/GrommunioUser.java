@@ -23,6 +23,7 @@ class GrommunioUser extends AbstractUserAdapter {
     private final String email;
     private final String firstName;
     private final String lastName;
+    private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUser.class);
 
     private GrommunioUser(KeycloakSession session, RealmModel realm,
       ComponentModel storageProviderModel,

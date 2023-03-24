@@ -3,7 +3,8 @@
 
 package org.grommunio.keycloak.storage.user;
 
-import org.jboss.logging.Logger;
+//import org.jboss.logging.Logger;
+import org.grommunio.keycloak.storage.user.GrommunioLogger;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputValidator;
@@ -49,7 +50,7 @@ public class GrommunioUserStorageProvider implements
         CredentialInputValidator,
 	UserQueryProvider
 {
-    private static final Logger logger = Logger.getLogger(GrommunioUserStorageProvider.class);
+    private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUserStorageProvider.class);
 
     protected KeycloakSession session;
     protected ComponentModel model;
@@ -60,7 +61,7 @@ public class GrommunioUserStorageProvider implements
     public GrommunioUserStorageProvider(KeycloakSession session, ComponentModel model, GrommunioUserStorageProviderFactory grommunioUserStorageProviderFactory) {
         this.session = session;
         this.model = model;
-	this.factory = grommunioUserStorageProviderFactory;
+        this.factory = grommunioUserStorageProviderFactory;
     }
 
     static {

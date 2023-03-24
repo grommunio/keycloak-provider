@@ -13,6 +13,7 @@ import org.keycloak.component.ComponentModel;
 
 public class DbUtil {
 
+    private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioConfig.class);
     public static Connection getConnection(ComponentModel config) throws SQLException{
         Properties conf;
         try {
