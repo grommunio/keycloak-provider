@@ -16,7 +16,7 @@ import org.grommunio.libpam.PAMException;
 public class GrommunioPAMAuthenticator {
 
     private static final String PAM_SERVICE = "grommunioauth";
-    private static final Logger logger = Logger.getLogger(GrommunioPAMAuthenticator.class);
+    private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioPAMAuthenticator.class);
     private final String username;
     private final String[] factors;
 

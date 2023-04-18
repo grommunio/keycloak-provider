@@ -17,7 +17,7 @@ import org.keycloak.storage.UserStorageProviderFactory;
 public class GrommunioUserStorageProviderFactory implements UserStorageProviderFactory<GrommunioUserStorageProvider> {
 
     public static final String PROVIDER_NAME = "grommunio";
-    private static final Logger logger = Logger.getLogger(GrommunioUserStorageProviderFactory.class);
+    private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUserStorageProviderFactory.class);
 
     @Override
     public String getId() {

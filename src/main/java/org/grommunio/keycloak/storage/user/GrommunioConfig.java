@@ -12,7 +12,7 @@ import java.util.Properties;
 
 public class GrommunioConfig {
 
-    private static final Logger logger = Logger.getLogger(GrommunioConfig.class);
+    private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioConfig.class);
 
     public static Properties getConfig() throws IOException {
 
