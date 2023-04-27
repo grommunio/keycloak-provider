@@ -202,7 +202,7 @@ public class GrommunioUserStorageProvider implements
                 "left join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
                 "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' " +
                 "and u.username like ? order by u.username limit ? offset ?");
-            st.setString(1, "%" + search + "%");
+            st.setString(1, "%" + search.replace('*', '%') + "%");
             st.setInt(2, maxResults);
             st.setInt(3, firstResult);
             st.execute();
