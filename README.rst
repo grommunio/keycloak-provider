@@ -36,7 +36,7 @@ Getting started
 Prerequisites
 -------------
 
-* A working **Keycloak** installation**, check out grommunio-auth for
+* A working **Keycloak** installation, check out grommunio-auth for
   simplified deployment
 
 Installation
