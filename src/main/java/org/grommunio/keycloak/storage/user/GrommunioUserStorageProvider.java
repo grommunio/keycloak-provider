@@ -89,8 +89,9 @@ public class GrommunioUserStorageProvider implements
                 "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
                 "from users as u " +
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
-	       	"join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-	        "where u.username = ?");
+                "join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
+                "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' " +
+                "and u.username = ?");
             st.setString(1, username);
             st.execute();
             ResultSet rs = st.getResultSet();
@@ -116,7 +117,8 @@ public class GrommunioUserStorageProvider implements
                 "from users as u " +
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
 	       	"join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-	        "where u.username = ?");
+                "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' " +
+                "and u.username = ?");
             st.setString(1, email);
             st.execute();
             ResultSet rs = st.getResultSet();
@@ -198,7 +200,8 @@ public class GrommunioUserStorageProvider implements
                 "from users as u " +
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
                 "join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-                "where u.username like ? order by u.username limit ? offset ?");
+                "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' " +
+                "and u.username like ? order by u.username limit ? offset ?");
             st.setString(1, "%" + search + "%");
             st.setInt(2, maxResults);
             st.setInt(3, firstResult);
