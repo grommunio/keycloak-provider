@@ -86,7 +86,7 @@ public class GrommunioUserStorageProvider implements
         try ( Connection c = DbUtil.getConnection(this.model)) {
             PreparedStatement st = c.prepareStatement(
                 "select " + 
-                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.primary_email as email " +
+                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
                 "from users as u " +
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
 	       	"join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
@@ -112,11 +112,11 @@ public class GrommunioUserStorageProvider implements
         try ( Connection c = DbUtil.getConnection(this.model)) {
             PreparedStatement st = c.prepareStatement(
                 "select " + 
-                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.primary_email as email " +
+                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
                 "from users as u " +
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
 	       	"join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-	        "where u.primary_email = ?");
+	        "where u.username = ?");
             st.setString(1, email);
             st.execute();
             ResultSet rs = st.getResultSet();
@@ -194,7 +194,7 @@ public class GrommunioUserStorageProvider implements
         try ( Connection c = DbUtil.getConnection(this.model)) {
             PreparedStatement st = c.prepareStatement(
                 "select " +
-                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.primary_email as email " +
+                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
                 "from users as u " +
                 "join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
                 "join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
