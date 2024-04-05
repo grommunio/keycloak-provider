@@ -65,13 +65,18 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
     }
 
     @Override
+    public boolean isEmailVerified() {
+        return true;
+    }
+
+    @Override
     public Map<String, List<String>> getAttributes() {
         MultivaluedHashMap<String, String> attributes = new MultivaluedHashMap<>();
         attributes.add(UserModel.USERNAME, getUsername());
-        attributes.add(UserModel.EMAIL,getEmail());
-        attributes.add(UserModel.EMAIL_VERIFIED,Boolean.toString(true));
-        attributes.add(UserModel.FIRST_NAME,getFirstName());
-        attributes.add(UserModel.LAST_NAME,getLastName());
+        attributes.add(UserModel.EMAIL, getEmail());
+        attributes.add(UserModel.EMAIL_VERIFIED, Boolean.toString(true));
+        attributes.add(UserModel.FIRST_NAME, getFirstName());
+        attributes.add(UserModel.LAST_NAME, getLastName());
         return attributes;
     }
 
