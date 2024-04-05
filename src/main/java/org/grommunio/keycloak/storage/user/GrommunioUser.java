@@ -14,10 +14,10 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.SubjectCredentialManager;
-import org.keycloak.storage.adapter.AbstractUserAdapter;
+import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
 
 
-class GrommunioUser extends AbstractUserAdapter {
+class GrommunioUser extends AbstractUserAdapterFederatedStorage {
     
     private final String username;
     private final String email;
@@ -42,6 +42,11 @@ class GrommunioUser extends AbstractUserAdapter {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        logger.infof("setUsername(%s)", username);
     }
 
     @Override
