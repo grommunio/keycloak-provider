@@ -26,7 +26,7 @@ SPDX-FileCopyrightText: 2023 grommunio GmbH
         <version.hibernate.javax.persistence>1.0.0.Final</version.hibernate.javax.persistence>
 	<version.keycloak>${project.version}</version.keycloak>
 	<version.surefire.plugin>2.19.1</version.surefire.plugin>
-	<version.jboss.logging>3.2.1.Final</version.jboss.logging>
+	<version.jboss.logging>3.5.0.Final</version.jboss.logging>
 	<version.sun.jna>3.0.9</version.sun.jna>
     </properties>
 
@@ -59,17 +59,11 @@ SPDX-FileCopyrightText: 2023 grommunio GmbH
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
             <version>${version.jboss.logging}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jna</groupId>
             <artifactId>jna</artifactId>
             <version>${version.sun.jna}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>3.5.0.Final</version>
         </dependency>
     </dependencies>
 

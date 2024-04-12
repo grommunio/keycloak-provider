@@ -4,7 +4,7 @@ package org.grommunio.keycloak.storage.user;
 
 import org.jboss.logging.Logger;
 //import org.jboss.logging.Logger.Level;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jboss.logmanager.ExtLogRecord;
 
 import java.util.Arrays;
