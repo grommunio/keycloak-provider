@@ -1,42 +1,35 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2023 grommunio GmbH
-
 package org.grommunio.keycloak.storage.user;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.component.ComponentModel;
-import org.keycloak.credential.LegacyUserCredentialManager;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
-import org.keycloak.models.SubjectCredentialManager;
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
 
-
 class GrommunioUser extends AbstractUserAdapterFederatedStorage {
-    
+
     private final String username;
     private final String email;
     private final String firstName;
     private final String lastName;
     private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUser.class);
 
-    private GrommunioUser(KeycloakSession session, RealmModel realm,
-      ComponentModel storageProviderModel,
-      String username,
-      String email,
-      String firstName,
-      String lastName ) {
+    GrommunioUser(KeycloakSession session,
+                  RealmModel realm,
+                  ComponentModel storageProviderModel,
+                  String username,
+                  String email,
+                  String firstName,
+                  String lastName) {
         super(session, realm, storageProviderModel);
         this.username = username;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        
     }
 
     @Override
@@ -80,10 +73,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         return attributes;
     }
 
-    @Override
-    public SubjectCredentialManager credentialManager() {
-        return new LegacyUserCredentialManager(session, realm, this);
-    }
+    // No credentialManager() override! We rely on AbstractUserAdapterFederatedStorage's default behavior.
 
     static class Builder {
         private final KeycloakSession session;
@@ -93,39 +83,32 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         private String email;
         private String firstName;
         private String lastName;
-        
-        Builder(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel,String username) {
+
+        Builder(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel, String username) {
             this.session = session;
             this.realm = realm;
             this.storageProviderModel = storageProviderModel;
             this.username = username;
         }
-        
+
         GrommunioUser.Builder email(String email) {
             this.email = email;
             return this;
         }
-        
+
         GrommunioUser.Builder firstName(String firstName) {
             this.firstName = firstName;
             return this;
         }
-        
+
         GrommunioUser.Builder lastName(String lastName) {
             this.lastName = lastName;
             return this;
         }
-        
+
         GrommunioUser build() {
-            return new GrommunioUser(
-              session,
-              realm,
-              storageProviderModel,
-              username,
-              email,
-              firstName,
-              lastName );
-            
+            return new GrommunioUser(session, realm, storageProviderModel, username, email, firstName, lastName);
         }
     }
 }
+

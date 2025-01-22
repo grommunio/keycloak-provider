@@ -6,7 +6,7 @@ SPDX-FileCopyrightText: 2023 grommunio GmbH
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <groupId>org.grommunio.keycloak</groupId>
-    <version>24.0.2</version>
+    <version>26.1.0</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>grommunio-user-provider</artifactId>
     <packaging>jar</packaging>
