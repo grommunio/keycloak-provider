@@ -37,7 +37,7 @@ public class GrommunioPAMAuthenticator {
             return pam.authenticate(username, factors);
         } catch (Throwable t) {
             logger.warn("PAM init/auth failed: ", t.toString(), t);
-            return false
+            return false;
         } finally {
             if (pam != null) {
                 try {

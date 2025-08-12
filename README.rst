@@ -26,8 +26,8 @@ At a glance
 Built with
 ==========
 
-* Keycloak >= 20.0.1
-* OpenJDK >=8, 17 recommended
+* Keycloak >= 23.2.1
+* OpenJDK > 17, 21 recommended
 * Maven
 
 Getting started
