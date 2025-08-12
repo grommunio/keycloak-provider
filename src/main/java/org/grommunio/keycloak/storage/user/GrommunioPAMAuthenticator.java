@@ -46,7 +46,5 @@ public class GrommunioPAMAuthenticator {
                 }
             }
         }
-
-        return authenticated;
     }
 }
