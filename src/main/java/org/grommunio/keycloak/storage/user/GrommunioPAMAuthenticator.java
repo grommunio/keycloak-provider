@@ -3,9 +3,7 @@
 
 package org.grommunio.keycloak.storage.user;
 
-import org.jboss.logging.Logger;
 import org.grommunio.libpam.PAM;
-import org.grommunio.libpam.PAMException;
 
 /**
  * PAMAuthenticator for Unix users
@@ -33,16 +31,20 @@ public class GrommunioPAMAuthenticator {
     public boolean authenticate() {
         logger.info("authenticate()");
         PAM pam = null;
-        boolean authenticated = false;
 
         try {
             pam = new PAM(PAM_SERVICE);
-            authenticated = pam.authenticate(username, factors);
-        } catch (PAMException e) {
-            logger.error("PAM Authentication failed", e);
-            e.printStackTrace();
+            return pam.authenticate(username, factors);
+        } catch (Throwable t) {
+            logger.warn("PAM init/auth failed: ", t.toString(), t);
+            return false
         } finally {
-            pam.dispose();
+            if (pam != null) {
+                try {
+                    pam.dispose();
+                } catch (Throwable ignore) {
+                }
+            }
         }
 
         return authenticated;

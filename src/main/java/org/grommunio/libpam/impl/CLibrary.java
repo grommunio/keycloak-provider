@@ -145,9 +145,17 @@ public interface CLibrary extends Library {
             } else if (Platform.isSolaris()) {
                 return (CLibrary) Native.loadLibrary("c", SolarisCLibrary.class);
             } else if (Platform.isLinux()) {
-                return (CLibrary) Native.loadLibrary("c", LinuxCLibrary.class);
+                return loadLinux();
             } else {
                 return (CLibrary) Native.loadLibrary("c", CLibrary.class);
+            }
+        }
+
+        private static CLibrary loadLinux() {
+            try {
+                return Native.load("c", LinuxCLibrary.class);
+            } catch (UnsatisfiedLinkError e) {
+                return Native.load("libc.so.6", LinuxCLibrary.class);
             }
         }
     }
