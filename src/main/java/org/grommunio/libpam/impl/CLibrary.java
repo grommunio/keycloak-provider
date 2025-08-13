@@ -153,9 +153,9 @@ public interface CLibrary extends Library {
 
         private static CLibrary loadLinux() {
             try {
-                return Native.load("c", LinuxCLibrary.class);
+                return (CLibrary) Native.loadLibrary("c", LinuxCLibrary.class);
             } catch (UnsatisfiedLinkError e) {
-                return Native.load("libc.so.6", LinuxCLibrary.class);
+                return (CLibrary) Native.loadLibrary("libc.so.6", LinuxCLibrary.class);
             }
         }
     }
