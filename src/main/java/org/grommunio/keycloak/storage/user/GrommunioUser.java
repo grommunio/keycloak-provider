@@ -11,10 +11,12 @@ import org.keycloak.component.ComponentModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
 
 class GrommunioUser extends AbstractUserAdapterFederatedStorage {
     private final String username;
+    private final int id;
     private final String email;
     private final String firstName;
     private final String lastName;
@@ -24,11 +26,13 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
                   RealmModel realm,
                   ComponentModel storageProviderModel,
                   String username,
+                  int id,
                   String email,
                   String firstName,
                   String lastName) {
         super(session, realm, storageProviderModel);
         this.username = username;
+        this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,6 +43,12 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         return username;
     }
 
+    @Override
+    public String getId() {
+        return new StorageId(storageProviderModel.getId(), String.valueOf(this.id)).getId();
+    }
+
+    // TODO: ???
     @Override
     public void setUsername(String username) {
         logger.debugf("setUsername(%s)", username);
@@ -82,15 +92,17 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         private final RealmModel realm;
         private final ComponentModel storageProviderModel;
         private final String username;
+        private final int id;
         private String email;
         private String firstName;
         private String lastName;
 
-        Builder(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel, String username) {
+        Builder(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel, String username, int id) {
             this.session = session;
             this.realm = realm;
             this.storageProviderModel = storageProviderModel;
             this.username = username;
+            this.id = id;
         }
 
         GrommunioUser.Builder email(String email) {
@@ -109,7 +121,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         }
 
         GrommunioUser build() {
-            return new GrommunioUser(session, realm, storageProviderModel, username, email, firstName, lastName);
+            return new GrommunioUser(session, realm, storageProviderModel, username, id, email, firstName, lastName);
         }
     }
 }

@@ -71,7 +71,24 @@ public class GrommunioUserStorageProvider implements
     public UserModel getUserById(RealmModel realm, String id) {
         logger.debugf("getUserById(%s)", id);
         StorageId sid = new StorageId(id);
-        return getUserByUsername(realm, sid.getExternalId());
+        try (Connection c = DbUtil.getConnection(this.model)) {
+            PreparedStatement st = c.prepareStatement(prepareSqlStatement + " and u.id = ?");
+            try {
+                st.setInt(1, Integer.parseInt(sid.getExternalId()));
+            } catch (NumberFormatException e) {
+                logger.warn(String.format("getUserById(%s): Unable to convert id (%s) to int", id, sid.getExternalId()));
+                return null;
+            }
+            st.execute();
+            ResultSet rs = st.getResultSet();
+            if (rs.next()) {
+                return mapUser(realm, rs);
+            } else {
+                return null;
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database error: " + ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -227,7 +244,7 @@ public class GrommunioUserStorageProvider implements
     }
 
     private UserModel mapUser(RealmModel realm, ResultSet rs) throws SQLException {
-        return new GrommunioUser.Builder(session, realm, model, rs.getString("username"))
+        return new GrommunioUser.Builder(session, realm, model, rs.getString("username"), rs.getInt("id"))
                 .email(rs.getString("email"))
                 .firstName(rs.getString("firstName"))
                 .lastName(rs.getString("lastName"))
