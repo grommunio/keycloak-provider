@@ -12,7 +12,6 @@ import org.grommunio.libpam.PAM;
  * @version $Revision: 1 $
  */
 public class GrommunioPAMAuthenticator {
-
     private static final String PAM_SERVICE = "grommunioauth";
     private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioPAMAuthenticator.class);
     private final String username;
@@ -29,14 +28,14 @@ public class GrommunioPAMAuthenticator {
      * @return boolean if user was successfully authenticated
      */
     public boolean authenticate() {
-        logger.info("authenticate()");
+        logger.debug("authenticate()");
         PAM pam = null;
 
         try {
             pam = new PAM(PAM_SERVICE);
             return pam.authenticate(username, factors);
         } catch (Throwable t) {
-            logger.warn("PAM init/auth failed: ", t.toString(), t);
+            logger.error("PAM init/auth failed: ", t.toString(), t);
             return false;
         } finally {
             if (pam != null) {

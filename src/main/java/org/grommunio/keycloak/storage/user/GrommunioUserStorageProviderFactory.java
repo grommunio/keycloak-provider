@@ -3,11 +3,8 @@
 
 package org.grommunio.keycloak.storage.user;
 
-import org.jboss.logging.Logger;
-import org.keycloak.Config;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.storage.UserStorageProviderFactory;
 
 /**
@@ -15,7 +12,6 @@ import org.keycloak.storage.UserStorageProviderFactory;
  * @version $Revision: 1 $
  */
 public class GrommunioUserStorageProviderFactory implements UserStorageProviderFactory<GrommunioUserStorageProvider> {
-
     public static final String PROVIDER_NAME = "grommunio";
     private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUserStorageProviderFactory.class);
 
@@ -30,23 +26,7 @@ public class GrommunioUserStorageProviderFactory implements UserStorageProviderF
     }
 
     @Override
-    public void init(Config.Scope config) {
-    }
-
-    @Override
-    public void postInit(KeycloakSessionFactory factory) {
-    }
-
-    @Override
     public String getHelpText() {
         return "Storage Provider for grommunio user database";
-    }
-
-    @Override
-    public void close() {
-    }
-
-    protected GrommunioPAMAuthenticator createGrommunioPAMAuthenticator(String username, String... factors) {
-        return new GrommunioPAMAuthenticator(username, factors);
     }
 }

@@ -3,36 +3,29 @@
 
 package org.grommunio.keycloak.storage.user;
 
-import org.jboss.logging.Logger;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
-public class GrommunioConfig {
 
+public class GrommunioConfig {
     private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioConfig.class);
 
-    public static Properties getConfig() throws IOException {
-
+    public static Properties getConfig() {
         String grommunioConfigPath = "/etc/grommunio-keycloak/grommunio.properties";
         InputStream propsStream;
         Properties props = new Properties();
-        propsStream = new FileInputStream(grommunioConfigPath);
 
-	try {
-            if (propsStream != null) {
-                props.load(propsStream);
-            } else {
-                throw new FileNotFoundException("Could not load properties from '" + grommunioConfigPath + "'.");
-            }
-	} catch (Exception e) {
-            logger.error("Could not load grommunio.properties", e);
-            e.printStackTrace();
-        } finally {
+        try {
+            propsStream = Files.newInputStream(Paths.get(grommunioConfigPath));
+            props.load(propsStream);
             propsStream.close();
+        } catch (Exception e) {
+            logger.error("Could not load grommunio.properties file", e);
         }
-	return props;
+
+        return props;
     }
 }

@@ -14,7 +14,6 @@ import org.keycloak.models.UserModel;
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
 
 class GrommunioUser extends AbstractUserAdapterFederatedStorage {
-
     private final String username;
     private final String email;
     private final String firstName;
@@ -42,7 +41,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
 
     @Override
     public void setUsername(String username) {
-        logger.infof("setUsername(%s)", username);
+        logger.debugf("setUsername(%s)", username);
     }
 
     @Override
@@ -82,7 +81,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         private final KeycloakSession session;
         private final RealmModel realm;
         private final ComponentModel storageProviderModel;
-        private String username;
+        private final String username;
         private String email;
         private String firstName;
         private String lastName;
@@ -114,4 +113,3 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         }
     }
 }
-

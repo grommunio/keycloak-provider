@@ -3,11 +3,7 @@
 
 package org.grommunio.keycloak.storage.user;
 
-//import java.util.logging.Level;
-
 import org.jboss.logging.Logger;
-//import org.jboss.logging.Logger.Level;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jboss.logmanager.ExtLogRecord;
 
 import java.util.Arrays;
@@ -15,8 +11,8 @@ import java.util.Iterator;
 
 public class GrommunioLogger extends Logger {
     public Level[] LEVELS;
-    private org.jboss.logmanager.Logger logger;
-//    public Logger logger = Logger.getLogger(GrommunioLogger.class);
+    private final org.jboss.logmanager.Logger logger;
+
     public GrommunioLogger(String name, org.jboss.logmanager.Logger logger) {
         super(name);
         this.logger = logger;
@@ -47,9 +43,8 @@ public class GrommunioLogger extends Logger {
         }
         return false;
     }
+
     public static Logger getLogger(Class<?> clazz) {
-//        return getLogger(clazz.getName());
-        //        org.jboss.logmanager.Logger l = getLogger(clazz.getName())
         return new GrommunioLogger(clazz.getName());
     }
 
@@ -66,7 +61,6 @@ public class GrommunioLogger extends Logger {
                 this.logger.log(loggerClassName, translatedLevel, String.valueOf(message), ExtLogRecord.FormatStyle.MESSAGE_FORMAT, parameters, thrown);
             }
         }
-
     }
 
     protected void doLogf(Logger.Level level, String loggerClassName, String format, Object[] parameters, Throwable thrown) {
@@ -81,19 +75,20 @@ public class GrommunioLogger extends Logger {
         if (level == org.jboss.logging.Logger.Level.TRACE) {
             return org.jboss.logmanager.Level.TRACE;
         } else {
-            return level == Level.DEBUG ? org.jboss.logmanager.Level.DEBUG : (org.jboss.logmanager.Level) infoOrHigher(level);
+            return level == Level.DEBUG ? org.jboss.logmanager.Level.DEBUG : infoOrHigher(level);
         }
     }
 
     private static org.jboss.logmanager.Level infoOrHigher(Level level) {
-        if (level == org.jboss.logging.Logger.Level.INFO) {
-            return org.jboss.logmanager.Level.INFO;
-        } else if (level == org.jboss.logging.Logger.Level.WARN) {
-            return org.jboss.logmanager.Level.WARN;
-        } else if (level == org.jboss.logging.Logger.Level.ERROR) {
-            return org.jboss.logmanager.Level.ERROR;
-        } else {
-            return (org.jboss.logmanager.Level)(level == org.jboss.logging.Logger.Level.FATAL ? org.jboss.logmanager.Level.FATAL : org.jboss.logmanager.Level.ALL);
+        switch(level) {
+            case INFO:
+                return org.jboss.logmanager.Level.INFO;
+            case WARN:
+                return org.jboss.logmanager.Level.WARN;
+            case ERROR:
+                return org.jboss.logmanager.Level.ERROR;
+            default:
+                return (org.jboss.logmanager.Level) (level == org.jboss.logging.Logger.Level.FATAL ? org.jboss.logmanager.Level.FATAL : org.jboss.logmanager.Level.ALL);
         }
     }
 }

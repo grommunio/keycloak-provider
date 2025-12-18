@@ -3,20 +3,14 @@
 
 package org.grommunio.keycloak.storage.user;
 
-//import org.jboss.logging.Logger;
-import org.grommunio.keycloak.storage.user.GrommunioLogger;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputValidator;
-import org.keycloak.credential.CredentialModel;
 import org.keycloak.models.GroupModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
-import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserCredentialModel;
 import org.keycloak.models.UserModel;
-import org.keycloak.models.cache.CachedUserModel;
-import org.keycloak.models.cache.OnUserCache;
 import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
@@ -29,16 +23,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Stream;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -48,14 +38,18 @@ public class GrommunioUserStorageProvider implements
         UserStorageProvider,
         UserLookupProvider,
         CredentialInputValidator,
-	UserQueryProvider
-{
+        UserQueryProvider {
     private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUserStorageProvider.class);
 
     protected KeycloakSession session;
     protected ComponentModel model;
 
     protected static final Set<String> supportedCredentialTypes = new HashSet<>();
+    private static final String prepareSqlStatement = "select "
+                                                    + "u.username, u.id, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email "
+                                                    + "from users as u " + "left join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 "
+                                                    + "left join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 "
+                                                    + "where u.address_status <> 4 and u.id <> 0 and u.maildir <> ''";
     private final GrommunioUserStorageProviderFactory factory;
 
     public GrommunioUserStorageProvider(KeycloakSession session, ComponentModel model, GrommunioUserStorageProviderFactory grommunioUserStorageProviderFactory) {
@@ -70,152 +64,127 @@ public class GrommunioUserStorageProvider implements
 
     @Override
     public void close() {
-        logger.info("close()");
+        logger.debug("close()");
     }
 
     @Override
     public UserModel getUserById(RealmModel realm, String id) {
-        logger.infof("getUserById(%s)", id);
+        logger.debugf("getUserById(%s)", id);
         StorageId sid = new StorageId(id);
-        return getUserByUsername(realm,sid.getExternalId());
+        return getUserByUsername(realm, sid.getExternalId());
     }
 
     @Override
     public UserModel getUserByUsername(RealmModel realm, String username) {
-        logger.infof("getUserByUsername(%s)", username);
-        try ( Connection c = DbUtil.getConnection(this.model)) {
-            PreparedStatement st = c.prepareStatement(
-                "select " + 
-                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
-                "from users as u " +
-                "left join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
-                "left join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-                "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' " +
-                "and u.username = ?");
+        logger.debugf("getUserByUsername(%s)", username);
+        try (Connection c = DbUtil.getConnection(this.model)) {
+            PreparedStatement st = c.prepareStatement(prepareSqlStatement + " and u.username = ?");
             st.setString(1, username);
             st.execute();
             ResultSet rs = st.getResultSet();
-            if ( rs.next()) {
-                return mapUser(realm,rs);
-            }
-            else {
+            if (rs.next()) {
+                return mapUser(realm, rs);
+            } else {
                 return null;
             }
-        }
-        catch(SQLException ex) {
-            throw new RuntimeException("Database error:" + ex.getMessage(),ex);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database error: " + ex.getMessage(), ex);
         }
     }
 
     @Override
     public UserModel getUserByEmail(RealmModel realm, String email) {
-        logger.infof("getUserByEmail(%s)", email);
-        try ( Connection c = DbUtil.getConnection(this.model)) {
-            PreparedStatement st = c.prepareStatement(
-                "select " + 
-                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
-                "from users as u " +
-                "left join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
-                "left join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-                "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' " +
-                "and u.username = ?");
+        logger.debugf("getUserByEmail(%s)", email);
+        try (Connection c = DbUtil.getConnection(this.model)) {
+            PreparedStatement st = c.prepareStatement(prepareSqlStatement + "and u.username = ?");
             st.setString(1, email);
             st.execute();
             ResultSet rs = st.getResultSet();
-            if ( rs.next()) {
-                return mapUser(realm,rs);
-            }
-            else {
+            if (rs.next()) {
+                return mapUser(realm, rs);
+            } else {
                 return null;
             }
-        }
-        catch(SQLException ex) {
-            throw new RuntimeException("Database error:" + ex.getMessage(),ex);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database error: " + ex.getMessage(), ex);
         }
     }
 
     @Override
     public boolean supportsCredentialType(String credentialType) {
-        logger.infof("supportsCredentialType(%s)", credentialType);
+        logger.debugf("supportsCredentialType(%s)", credentialType);
         return PasswordCredentialModel.TYPE.equals(credentialType);
     }
 
     @Override
     public boolean isConfiguredFor(RealmModel realm, UserModel user, String credentialType) {
-        logger.infof("isConfiguredFor(realm=%s,user=%s,credentialType=%s)",realm.getName(), user.getUsername(), credentialType);
-	return supportsCredentialType(credentialType);
+        logger.debugf("isConfiguredFor(realm=%s,user=%s,credentialType=%s)", realm.getName(), user.getUsername(), credentialType);
+        return supportsCredentialType(credentialType);
     }
 
     @Override
     public boolean isValid(RealmModel realm, UserModel user, CredentialInput input) {
-        logger.infof("isValid(realm=%s,user=%s,credentialInput.type=%s)",realm.getName(), user.getUsername(), input.getType());
+        logger.debugf("isValid(realm=%s,user=%s,credentialInput.type=%s)", realm.getName(), user.getUsername(), input.getType());
+
         if (!supportsCredentialType(input.getType()) || !(input instanceof UserCredentialModel)) return false;
+        logger.debugf("isValid() Credentialtype %s is supported.", input.getType());
 
-        logger.infof("isValid() Credentialtype %s is supported.", input.getType());
-	StorageId sid = new StorageId(user.getId());
-	String username = sid.getExternalId();
-	logger.infof("isValid() Username: %s.", username);
-
-        UserCredentialModel cred = (UserCredentialModel)input;
-        GrommunioPAMAuthenticator pam = factory.createGrommunioPAMAuthenticator(username, cred.getChallengeResponse());
+        String username = user.getUsername();
+        UserCredentialModel cred = (UserCredentialModel) input;
+        GrommunioPAMAuthenticator pam = new GrommunioPAMAuthenticator(username, cred.getChallengeResponse());
         return pam.authenticate();
     }
 
     @Override
     public int getUsersCount(RealmModel realm) {
-        logger.infof("getUsersCount: realm=%s", realm.getName() );
-        try ( Connection c = DbUtil.getConnection(this.model)) {
+        logger.debugf("getUsersCount: realm=%s", realm.getName());
+        try (Connection c = DbUtil.getConnection(this.model)) {
             Statement st = c.createStatement();
             st.execute("select count(*) from users");
             ResultSet rs = st.getResultSet();
             rs.next();
             return rs.getInt(1);
-        }
-        catch(SQLException ex) {
-            throw new RuntimeException("Database error:" + ex.getMessage(),ex);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database error: " + ex.getMessage(), ex);
         }
     }
 
+    // TODO: deprecated method
     @Override
     public Stream<UserModel> searchForUserStream(RealmModel realm, String search, Integer firstResult, Integer maxResults) {
         Map<String, String> attributes = new HashMap<>(1);
         attributes.put(UserModel.SEARCH, search);
-	return searchForUserStream(realm, attributes, firstResult, maxResults);
+        return searchForUserStream(realm, attributes, firstResult, maxResults);
     }
 
+    // TODO: deprecated method
     @Override
     public Stream<UserModel> searchForUserStream(RealmModel realm, String search) {
-        return searchForUserStream(realm,search,0,5000);
+        return searchForUserStream(realm, search, 0, 5000);
     }
 
     @Override
-    public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String,String> params, Integer firstResult, Integer maxResults) {
+    public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String, String> params, Integer firstResult, Integer maxResults) {
         String search = params.get(UserModel.SEARCH);
-        logger.infof("searchForUserStream: realm=%s, search=%s, firstResult=%d, maxResults=%d", realm.getName(), search, firstResult, maxResults);
+        logger.debugf("searchForUserStream: realm=%s, search=%s, firstResult=%d, maxResults=%d", realm.getName(), search, firstResult, maxResults);
 
-        try ( Connection c = DbUtil.getConnection(this.model)) {
-            String sql =
-                "select " +
-                "u.username, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email " +
-                "from users as u " +
-                "left join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 " +
-                "left join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 " +
-                "where u.address_status <> 4 and u.id <> 0 and u.maildir <> '' ";
+        try (Connection c = DbUtil.getConnection(this.model)) {
+            String sql = prepareSqlStatement;
 
-            Boolean needUserWhere = true;
-            if ( search == null ) {
+            boolean needUserWhere = true;
+            if (search == null) {
                 needUserWhere = false;
-            } else if ( search.equals("*") ) {
+            } else if (search.equals("*")) {
                 needUserWhere = false;
             }
 
-            if ( needUserWhere ) {
+            if (needUserWhere) {
                 sql += "and u.username like ? ";
-	    }
-	    sql += "limit ? offset ?";
+            }
+            sql += "limit ? offset ?";
 
             PreparedStatement st = c.prepareStatement(sql);
-            if ( needUserWhere ) {
+            if (needUserWhere) {
                 st.setString(1, "%" + search + "%");
                 st.setInt(2, maxResults);
                 st.setInt(3, firstResult);
@@ -227,19 +196,18 @@ public class GrommunioUserStorageProvider implements
             st.execute();
             ResultSet rs = st.getResultSet();
             List<UserModel> users = new ArrayList<>();
-            while(rs.next()) {
-                users.add(mapUser(realm,rs));
+            while (rs.next()) {
+                users.add(mapUser(realm, rs));
             }
             return users.stream();
-        }
-        catch(SQLException ex) {
-            throw new RuntimeException("Database error:" + ex.getMessage(),ex);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database error:" + ex.getMessage(), ex);
         }
     }
 
     @Override
-    public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String,String> params) {
-        return searchForUserStream(realm,params,0,5000);
+    public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String, String> params) {
+        return searchForUserStream(realm, params, 0, 5000);
     }
 
 
@@ -259,14 +227,10 @@ public class GrommunioUserStorageProvider implements
     }
 
     private UserModel mapUser(RealmModel realm, ResultSet rs) throws SQLException {
-
-        GrommunioUser user = new GrommunioUser.Builder(session, realm, model, rs.getString("username"))
-          .email(rs.getString("email"))
-          .firstName(rs.getString("firstName"))
-          .lastName(rs.getString("lastName"))
-          .build();
-
-        return user;
+        return new GrommunioUser.Builder(session, realm, model, rs.getString("username"))
+                .email(rs.getString("email"))
+                .firstName(rs.getString("firstName"))
+                .lastName(rs.getString("lastName"))
+                .build();
     }
-
 }
