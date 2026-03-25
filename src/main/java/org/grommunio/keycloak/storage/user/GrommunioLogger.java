@@ -8,6 +8,7 @@ import org.jboss.logmanager.ExtLogRecord;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Properties;
 
 public class GrommunioLogger extends Logger {
     public Level[] LEVELS;
@@ -27,7 +28,8 @@ public class GrommunioLogger extends Logger {
 
     private void initLevel() {
         this.LEVELS = Level.values();
-        String level = System.getProperty("logging.level", "INFO");
+        Properties conf = GrommunioConfig.getConfig();
+        String level = conf.getProperty("logging.level", "INFO");
         if (this.contains(level)) {
             this.logger.setLevelName(level);
         }
