@@ -46,8 +46,8 @@ public class GrommunioUserStorageProvider implements
 
     protected static final Set<String> supportedCredentialTypes = new HashSet<>();
     private static final String prepareSqlStatement = "select "
-                                                    + "u.username, u.id, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email "
-                                                    + "from users as u " + "left join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 "
+                                                    + "u.username, u.id, p1.propval_str as firstName, p2.propval_str as lastName, u.username as email, u.privilege_bits "
+                                                    + "from users as u left join user_properties as p1 on u.id = p1.user_id and p1.proptag=973471775 "
                                                     + "left join user_properties as p2 on u.id = p2.user_id and p2.proptag=974192671 "
                                                     + "where u.address_status <> 4 and u.id <> 0 and u.maildir <> ''";
     private final GrommunioUserStorageProviderFactory factory;
@@ -248,6 +248,7 @@ public class GrommunioUserStorageProvider implements
                 .email(rs.getString("email"))
                 .firstName(rs.getString("firstName"))
                 .lastName(rs.getString("lastName"))
+                .privilegeBits(rs.getInt("privilege_bits"))
                 .build();
     }
 }

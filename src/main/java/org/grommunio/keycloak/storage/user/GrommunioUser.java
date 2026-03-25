@@ -20,6 +20,10 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
     private final String email;
     private final String firstName;
     private final String lastName;
+    private final String chatPerm;
+    private final String meetPerm;
+    private final String filesPerm;
+    private final String webPerm;
     private static final GrommunioLogger logger = (GrommunioLogger) GrommunioLogger.getLogger(GrommunioUser.class);
 
     GrommunioUser(KeycloakSession session,
@@ -29,13 +33,21 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
                   int id,
                   String email,
                   String firstName,
-                  String lastName) {
+                  String lastName,
+                  String chatPerm,
+                  String meetPerm,
+                  String filesPerm,
+                  String webPerm) {
         super(session, realm, storageProviderModel);
         this.username = username;
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.chatPerm = chatPerm;
+        this.meetPerm = meetPerm;
+        this.filesPerm = filesPerm;
+        this.webPerm = webPerm;
     }
 
     @Override
@@ -48,7 +60,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         return new StorageId(storageProviderModel.getId(), String.valueOf(this.id)).getId();
     }
 
-    // TODO: ???
+    // TODO: necessary?
     @Override
     public void setUsername(String username) {
         logger.debugf("setUsername(%s)", username);
@@ -74,6 +86,22 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         return true;
     }
 
+    public String getChatPerm() {
+        return this.chatPerm;
+    }
+
+    public String getMeetPerm() {
+        return this.meetPerm;
+    }
+
+    public String getFilesPerm() {
+        return this.filesPerm;
+    }
+
+    public String getWebPerm() {
+        return this.webPerm;
+    }
+
     @Override
     public Map<String, List<String>> getAttributes() {
         MultivaluedHashMap<String, String> attributes = new MultivaluedHashMap<>();
@@ -82,12 +110,21 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         attributes.add(UserModel.EMAIL_VERIFIED, Boolean.toString(true));
         attributes.add(UserModel.FIRST_NAME, getFirstName());
         attributes.add(UserModel.LAST_NAME, getLastName());
+        attributes.add("chatPerm", getChatPerm());
+        attributes.add("meetPerm", getMeetPerm());
+        attributes.add("filesPerm", getFilesPerm());
+        attributes.add("webPerm", getWebPerm());
         return attributes;
     }
+
 
     // No credentialManager() override! We rely on AbstractUserAdapterFederatedStorage's default behavior.
 
     static class Builder {
+        private static final int CHAT_PERM_BITS = 1 << 4;
+        private static final int MEET_PERM_BITS = 1 << 5;
+        private static final int FILES_PERM_BITS = 1 << 6;
+        private static final int WEB_PERM_BITS = 1 << 9;
         private final KeycloakSession session;
         private final RealmModel realm;
         private final ComponentModel storageProviderModel;
@@ -96,6 +133,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         private String email;
         private String firstName;
         private String lastName;
+        private int privilegeBits;
 
         Builder(KeycloakSession session, RealmModel realm, ComponentModel storageProviderModel, String username, int id) {
             this.session = session;
@@ -120,8 +158,30 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
             return this;
         }
 
+        GrommunioUser.Builder privilegeBits(int privilegeBits) {
+            this.privilegeBits = privilegeBits;
+            return this;
+        }
+
         GrommunioUser build() {
-            return new GrommunioUser(session, realm, storageProviderModel, username, id, email, firstName, lastName);
+            String chatPerm = String.valueOf((privilegeBits & CHAT_PERM_BITS) > 0);
+            String meetPerm = String.valueOf((privilegeBits & MEET_PERM_BITS) > 0);
+            String filesPerm = String.valueOf((privilegeBits & FILES_PERM_BITS) > 0);
+            String webPerm = String.valueOf((privilegeBits & WEB_PERM_BITS) > 0);
+            return new GrommunioUser(
+                    session,
+                    realm,
+                    storageProviderModel,
+                    username,
+                    id,
+                    email,
+                    firstName,
+                    lastName,
+                    chatPerm,
+                    meetPerm,
+                    filesPerm,
+                    webPerm
+            );
         }
     }
 }
