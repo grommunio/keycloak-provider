@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2023 grommunio GmbH
+// SPDX-FileCopyrightText: 2026 grommunio GmbH
 
 package org.grommunio.keycloak.storage.user;
 

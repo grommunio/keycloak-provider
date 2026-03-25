@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 grommunio GmbH
+
 package org.grommunio.keycloak.storage.user;
 
 import java.util.List;
