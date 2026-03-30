@@ -17,7 +17,7 @@ At a glance
 
 * Provides user authentication support for any Keycloak installation
 * Enables Keycloak-enabled applications to authenticate with grommunio
-  backend, with support for grommunio's (Multi-)LDAP and non-LDAP users
+  backend, with support for grommunio`s (Multi-)LDAP and non-LDAP users
 * Provide OpenID Connect, OAuth 2.0 and SAML for grommunio and third-party
   applications
 * Provide single sign-on, user federation, and role-based access control
@@ -62,6 +62,6 @@ Contributing
 
 * https://docs.github.com/en/get-started/quickstart/contributing-to-projects
 * Alternatively, upload commits to a git store of your choosing, or export the
-  series as a patchset using `git format-patch
+  series as a patch set using `git format-patch
   <https://git-scm.com/docs/git-format-patch>`_, then convey the git
   link/patches through our direct contact address (above).
