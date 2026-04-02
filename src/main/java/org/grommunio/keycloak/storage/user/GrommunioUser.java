@@ -102,6 +102,10 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         return this.webPerm;
     }
 
+    public String getDbId() {
+        return String.valueOf(this.id);
+    }
+
     @Override
     public Map<String, List<String>> getAttributes() {
         MultivaluedHashMap<String, String> attributes = new MultivaluedHashMap<>();
@@ -110,6 +114,7 @@ class GrommunioUser extends AbstractUserAdapterFederatedStorage {
         attributes.add(UserModel.EMAIL_VERIFIED, Boolean.toString(true));
         attributes.add(UserModel.FIRST_NAME, getFirstName());
         attributes.add(UserModel.LAST_NAME, getLastName());
+        attributes.add("dbId", getDbId());
         attributes.add("chatPerm", getChatPerm());
         attributes.add("meetPerm", getMeetPerm());
         attributes.add("filesPerm", getFilesPerm());
