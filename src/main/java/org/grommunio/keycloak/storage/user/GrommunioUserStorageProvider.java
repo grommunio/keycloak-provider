@@ -101,6 +101,16 @@ public class GrommunioUserStorageProvider implements
             ResultSet rs = st.getResultSet();
             if (rs.next()) {
                 return mapUser(realm, rs);
+            }
+            // When no user has this username, use the alternative login name (table altnames), as gromox does.
+            // The provider maps the user from u.username and u.id. Thus, PAM does the password check for the
+            // same account as for the username, and the stored credentials (OTP, WebAuthn) stay with the same user.
+            st = c.prepareStatement(prepareSqlStatement + " and u.id = (select a.user_id from altnames as a where a.altname = ?)");
+            st.setString(1, username);
+            st.execute();
+            rs = st.getResultSet();
+            if (rs.next()) {
+                return mapUser(realm, rs);
             } else {
                 return null;
             }
